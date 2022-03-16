@@ -38,8 +38,7 @@ export class CartData {
       if (!cartItemData) {
         this.addItem(CartItemData.fromTransaction(transaction));
       } else {
-        cartItemData.quantity += transaction.quantity;
-        cartItemData.hasPendingTransactions = true;
+        cartItemData.applyTransaction(transaction);
       }
     }
     // remove items with quantity <= 0

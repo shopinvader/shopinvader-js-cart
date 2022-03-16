@@ -35,4 +35,9 @@ export class CartItemData {
   static fromTransaction(transaction: Transaction): CartItemData {
     return new this(true, transaction.productId, transaction.quantity);
   }
+
+  applyTransaction(transaction: Transaction) {
+    this.quantity += transaction.quantity;
+    this.hasPendingTransactions = true;
+  }
 }
