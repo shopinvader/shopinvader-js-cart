@@ -17,10 +17,7 @@ export class Cart {
 
   private observers: CartObserver[] = [];
 
-  constructor(
-    erpFetch: any,
-    cartStorage: CartStorage,
-  ) {
+  constructor(erpFetch: any, cartStorage: CartStorage) {
     this.erpFetch = erpFetch;
     this.cartStorage = cartStorage;
   }

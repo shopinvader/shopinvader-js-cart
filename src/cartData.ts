@@ -43,7 +43,7 @@ export class CartData {
       }
     }
     // remove items with quantity <= 0
-    this.items = this.items.filter((item) => item.quantity > 0);
-    this.hasPendingTransactions = (transactions.length > 0);
+    this.items = this.items.filter(item => item.quantity > 0);
+    this.hasPendingTransactions = transactions.length > 0;
   }
 }

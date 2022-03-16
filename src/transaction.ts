@@ -21,6 +21,6 @@ export class Transaction {
       uuid: this.uuid,
       product_id: this.productId,
       quantity: this.quantity,
-    }
+    };
   }
 }
