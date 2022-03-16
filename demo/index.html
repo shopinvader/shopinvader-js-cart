@@ -1,17 +1,47 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en-GB">
-<head>
-  <meta charset="utf-8">
-  <style>
-    body {
-      background: #fafafa;
-    }
-  </style>
-</head>
-<body>
-  <div id="demo"></div>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      body {
+        background: #fafafa;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="demo">
+      <p>Product 1000 <button id="p1000">+</button><button id="m1000">-</button></p>
+      <p>Product 2000 <button id="p2000">+</button><button id="m2000">-</button></p>
+      <div id="cart"></div>
+    </div>
 
-  <script type="module">
-  </script>
-</body>
+    <script type="module">
+      import { Cart } from '../dist/src/cart.js';
+      import { Transaction } from '../dist/src/transaction.js';
+      import { WebStorageCartStorage } from '../dist/src/webStorageCartStorage.js';
+
+      class DemoObserver {
+        onCartUpdated(cart) {
+          const cartData = cart.getData();
+          document.getElementById("cart").innerHTML = `
+            <p>pending transactions: ${cartData.hasPendingTransactions}</p>
+            <ul>
+              ${cartData.items.map(item => `<li>product: ${item.productId}, quantity: ${item.quantity}`)}
+            </ul>
+          `;
+        }
+      }
+
+      const observer = new DemoObserver();
+
+      const cart = new Cart(null, new WebStorageCartStorage(window.localStorage));
+      cart.registerObserver(observer);
+      observer.onCartUpdated(cart);
+
+      document.getElementById("p1000").addEventListener("click", () => cart.addTransaction(new Transaction(1000, 1)));
+      document.getElementById("m1000").addEventListener("click", () => cart.addTransaction(new Transaction(1000, -1)));
+      document.getElementById("p2000").addEventListener("click", () => cart.addTransaction(new Transaction(2000, 1)));
+      document.getElementById("m2000").addEventListener("click", () => cart.addTransaction(new Transaction(2000, -1)));
+    </script>
+  </body>
 </html>
