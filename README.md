@@ -7,6 +7,16 @@ to the ERP when it becomes offline, using the `/cart/v2/sync` endpoint.
 Changes to the cart are notified to consumer (such as UI components) via an observer
 parttern.
 
+/!\ this is WIP - TODO:
+
+- do not accept transactions that bring the quantity of a product to negative?
+- error handling in sync() (wating for ErpFetch to rais errors)
+- background sync (with exponential retry delay in case of error)
+- actually test this with the backend
+- add some basic ERP fields to `CartData` and `CartItemData`, such as prices, etc
+- add factories so `CartData` and `CartItemData` are extensible (so front end devs
+  can add methods such as price calculations and such)
+
 ## Installation
 
 ```bash
@@ -15,8 +25,9 @@ npm i shopinvader-js-cart
 
 ## Usage
 
-You first need an `ErpFetch` object from https://github.com/shopinvader/shopinvader-js,
-which encapsulate the ERP authentication mechanism.
+You first need an `ErpFetch` object from
+[shopinvader-js](https://github.com/shopinvader/shopinvader-js), which encapsulate the
+ERP authentication mechanism.
 
 You then create a cart object:
 
@@ -28,7 +39,7 @@ const cart = Cart(
 cart.registerObjserver(observer);
 cart.addTransaction(new Transaction(productId, quantity));
 cartData = cart.getData();
-// cartData.buffered indicates that transactions are pending synchronization
+// cartData.hasPendingTransactions indicates that transactions are pending synchronization
 // cartData.syncError indicates that there was an error syncing the cart with the ERP
 ```
 
@@ -77,5 +88,5 @@ To run a local development server that serves the basic demo located in `demo/in
 
 ## Authors
 
-* Laurent Mignon <laurent.mignon@acsone.eu>
-* Stéphane Bidoul <stephane.bidoul@acsone.eu>
+- Laurent Mignon <laurent.mignon@acsone.eu>
+- Stéphane Bidoul <stephane.bidoul@acsone.eu>
