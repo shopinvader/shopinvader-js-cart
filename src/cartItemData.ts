@@ -3,8 +3,7 @@
 import { Transaction } from "./transaction.js";
 
 export class CartItemData {
-  // buffered means there are pending transactions for this item
-  public buffered: boolean;
+  public hasPendingTransactions: boolean;
 
   public productId: number;
 
@@ -13,12 +12,12 @@ export class CartItemData {
   public erpCartItem: any;
 
   constructor(
-    buffered: boolean,
+    hasPendingTransactions: boolean,
     productId: number,
     quantity: number,
     erpCartItem?: any
   ) {
-    this.buffered = buffered;
+    this.hasPendingTransactions = hasPendingTransactions;
     this.productId = productId;
     this.quantity = quantity;
     this.erpCartItem = erpCartItem;

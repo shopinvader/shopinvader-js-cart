@@ -12,7 +12,7 @@ describe('ShopinvaderJsCart', () => {
     cart.addTransaction(new Transaction(productId, 1));
     const item = cart.getData().getItem(productId);
     expect(item).to.exist;
-    expect(item?.buffered).to.be.true;
+    expect(item?.hasPendingTransactions).to.be.true;
     expect(item?.quantity).to.equal(1);
     cart.addTransaction(new Transaction(productId, 2));
     const item2 = cart.getData().getItem(productId);
@@ -20,5 +20,16 @@ describe('ShopinvaderJsCart', () => {
     cart.addTransaction(new Transaction(productId, -3));
     const item3 = cart.getData().getItem(productId);
     expect(item3).to.be.undefined;
+  });
+
+  it('test hasPendingTransactions', () => {
+    const productId: number = 1000;
+    const cart = new Cart(null, new MemoryCartStorage());
+    expect(cart.getData().hasPendingTransactions).to.be.false;
+    cart.addTransaction(new Transaction(productId, 2));
+    expect(cart.getData().hasPendingTransactions).to.be.true;
+    cart.addTransaction(new Transaction(productId, -2));
+    expect(cart.hasPendingTransactions()).to.be.false;
+    expect(cart.getData().hasPendingTransactions).to.be.false;
   });
 });

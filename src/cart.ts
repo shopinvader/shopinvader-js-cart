@@ -47,6 +47,10 @@ export class Cart {
     this.notifyCartUpdated();
   }
 
+  hasPendingTransactions(): boolean {
+    return this.cartStorage.getTransactions().length > 0;
+  }
+
   getData(): CartData {
     const cartData = CartData.fromErpCart(this.erpCart);
     cartData.applyTransactions(this.cartStorage.getTransactions());
@@ -70,8 +74,8 @@ export class Cart {
     } catch (error) {
       console.error(error);
       success = false;
-      // If Odoo is not available, this is not an error, the cart will simply be
-      // buffered.
+      // If Odoo is not available, this is not an error, the cart will simply stay
+      // with pending transactions.
       this.syncError = true; // TODO (error.status !== 503);
       // In case of error, assume the transactions have not been applied, keep them for
       // an ulterior sync.

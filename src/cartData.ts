@@ -4,8 +4,7 @@ import { CartItemData } from './cartItemData.js';
 import { Transaction } from './transaction.js';
 
 export class CartData {
-  // buffered means there are pending transactions
-  public buffered: boolean = false;
+  public hasPendingTransactions: boolean = false;
 
   public syncError: boolean = false;
 
@@ -40,10 +39,11 @@ export class CartData {
         this.addItem(CartItemData.fromTransaction(transaction));
       } else {
         cartItemData.quantity += transaction.quantity;
-        cartItemData.buffered = true;
+        cartItemData.hasPendingTransactions = true;
       }
-      this.buffered = true;
     }
+    // remove items with quantity <= 0
     this.items = this.items.filter((item) => item.quantity > 0);
+    this.hasPendingTransactions = (transactions.length > 0);
   }
 }
