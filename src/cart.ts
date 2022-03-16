@@ -61,8 +61,8 @@ export class Cart {
     let success: boolean;
     try {
       this.erpCart = await this.erpFetch.post('/cart/v2/sync', {
-        cartUuid: this.cartStorage.getUuid(),
-        transactions: txs,
+        cart_uuid: this.cartStorage.getUuid(),
+        transactions: txs.map(transaction => transaction.toErpTransaction()),
       });
       success = true;
       this.syncError = false;

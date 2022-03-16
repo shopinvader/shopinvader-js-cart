@@ -14,4 +14,13 @@ export class Transaction {
     this.quantity = quantity;
     this.uuid = uuidv4();
   }
+
+  /* Convert to a JSON object suitable to send to the ERP */
+  toErpTransaction(): any {
+    return {
+      uuid: this.uuid,
+      product_id: this.productId,
+      quantity: this.quantity,
+    }
+  }
 }
