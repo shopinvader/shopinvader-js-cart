@@ -13,8 +13,8 @@ parttern.
 - error handling in sync() (wating for ErpFetch to rais errors)
 - background sync (with exponential retry delay in case of error)
 - actually test this with the backend
-- add some basic ERP fields to `CartData` and `CartItemData`, such as prices, etc
-- add factories so `CartData` and `CartItemData` are extensible (so front end devs
+- add some basic ERP fields to `CartData` and `CartLineData`, such as prices, etc
+- add factories so `CartData` and `CartLineData` are extensible (so front end devs
   can add methods such as price calculations and such)
 
 ## Installation

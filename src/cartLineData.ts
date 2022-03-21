@@ -2,37 +2,37 @@
 
 import { Transaction } from './transaction.js';
 
-export class CartItemData {
+export class CartLineData {
   public hasPendingTransactions: boolean;
 
   public productId: number;
 
   public quantity: number;
 
-  public erpCartItem: any;
+  public erpCartLine: any;
 
   constructor(
     hasPendingTransactions: boolean,
     productId: number,
     quantity: number,
-    erpCartItem?: any
+    erpCartLine?: any
   ) {
     this.hasPendingTransactions = hasPendingTransactions;
     this.productId = productId;
     this.quantity = quantity;
-    this.erpCartItem = erpCartItem;
+    this.erpCartLine = erpCartLine;
   }
 
-  static fromErpCartItem(erpCartItem: any): CartItemData {
+  static fromErpCartLine(erpCartLine: any): CartLineData {
     return new this(
       false,
-      erpCartItem.product_id,
-      erpCartItem.quantity,
-      erpCartItem
+      erpCartLine.product_id,
+      erpCartLine.quantity,
+      erpCartLine
     );
   }
 
-  static fromTransaction(transaction: Transaction): CartItemData {
+  static fromTransaction(transaction: Transaction): CartLineData {
     return new this(true, transaction.productId, transaction.quantity);
   }
 

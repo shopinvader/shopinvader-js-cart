@@ -1,6 +1,6 @@
 // Copyright (c) ACSONE SA/NV 2022
 
-import { CartItemData } from './cartItemData.js';
+import { CartLineData } from './cartLineData.js';
 import { Transaction } from './transaction.js';
 
 export class CartData {
@@ -8,7 +8,7 @@ export class CartData {
 
   public syncError: boolean = false;
 
-  public items: CartItemData[] = [];
+  public items: CartLineData[] = [];
 
   public erpCart: any;
 
@@ -17,28 +17,28 @@ export class CartData {
     cartData.erpCart = erpCart;
     cartData.items = [];
     if (erpCart) {
-      for (const erpCartItem of erpCart.items) {
-        cartData.addItem(CartItemData.fromErpCartItem(erpCartItem));
+      for (const erpCartLine of erpCart.items) {
+        cartData.addItem(CartLineData.fromErpCartLine(erpCartLine));
       }
     }
     return cartData;
   }
 
-  addItem(item: CartItemData) {
+  addItem(item: CartLineData) {
     this.items.push(item);
   }
 
-  getItem(productId: number): CartItemData | undefined {
+  getItem(productId: number): CartLineData | undefined {
     return this.items.find(item => item.productId === productId);
   }
 
   applyTransactions(transactions: Transaction[]) {
     for (const transaction of transactions) {
-      const cartItemData = this.getItem(transaction.productId);
-      if (!cartItemData) {
-        this.addItem(CartItemData.fromTransaction(transaction));
+      const cartLineData = this.getItem(transaction.productId);
+      if (!cartLineData) {
+        this.addItem(CartLineData.fromTransaction(transaction));
       } else {
-        cartItemData.applyTransaction(transaction);
+        cartLineData.applyTransaction(transaction);
       }
     }
     // remove items with quantity <= 0
