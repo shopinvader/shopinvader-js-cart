@@ -9,7 +9,6 @@ parttern.
 
 /!\ this is WIP - TODO:
 
-- do not accept transactions that bring the quantity of a product to negative?
 - error handling in sync() (wating for ErpFetch to rais errors)
 - background sync (with exponential retry delay in case of error)
 - actually test this with the backend
