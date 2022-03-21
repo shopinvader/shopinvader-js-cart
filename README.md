@@ -9,12 +9,16 @@ parttern.
 
 /!\ this is WIP - TODO:
 
-- error handling in sync() (wating for ErpFetch to rais errors)
-- background sync (with exponential retry delay in case of error)
-- actually test this with the backend
 - add some basic ERP fields to `CartData` and `CartLineData`, such as prices, etc
 - add factories so `CartData` and `CartLineData` are extensible (so front end devs
   can add methods such as price calculations and such)
+- error handling in sync() (wating for ErpFetch to rais errors)
+- background sync (with exponential retry delay in case of error)
+- actually test this with the backend
+- check that the cart uuid we have in local storage matches the cart uuid we got from
+  the erp, to avoid applying transactions on the wrong cart in the client - I think we
+  should discard the local storage if the cart uuid differs from the one we got from the
+  erp
 
 ## Installation
 
