@@ -7,12 +7,24 @@ export class Transaction {
 
   public readonly productId: number;
 
-  public readonly quantity: number;
+  public quantity: number;
 
-  constructor(productId: number, quantity: number) {
+  constructor(productId: number, quantity: number, uuid?: string) {
     this.productId = productId;
     this.quantity = quantity;
-    this.uuid = uuidv4();
+    this.uuid = uuid || uuidv4();
+  }
+
+  isForSameCartLine(other: Transaction): boolean {
+    return other.productId === this.productId;
+  }
+
+  merge(other: Transaction): boolean {
+    if (!this.isForSameCartLine(other)) {
+      return false;
+    }
+    this.quantity += other.quantity;
+    return true;
   }
 
   /* Convert to a JSON object suitable to send to the ERP */

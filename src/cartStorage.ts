@@ -4,7 +4,7 @@ import { Transaction } from './transaction.js';
 
 export interface CartStorage {
   getTransactions(): Transaction[];
-  addTransactions(transactions: Transaction[]): void;
+  updateTransactions(transactions: Transaction[]): void;
   popTransactions(): Transaction[];
   setUuid(uuid: string | null): void;
   getUuid(): string | null;

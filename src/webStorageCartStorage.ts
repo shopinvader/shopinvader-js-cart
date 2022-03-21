@@ -25,8 +25,11 @@ export class WebStorageCartStorage implements CartStorage {
       return new Data();
     }
     try {
-      return JSON.parse(data);
+      const res = JSON.parse(data) as Data;
+      res.transactions = res.transactions.map(t => new Transaction(t.productId, t.quantity, t.uuid));
+      return res;
     } catch (error) {
+      // we can't grok what we have in local storage, discard it
       return new Data();
     }
   }
@@ -45,9 +48,9 @@ export class WebStorageCartStorage implements CartStorage {
     this._set(data);
   }
 
-  addTransactions(transactions: Transaction[]): void {
+  updateTransactions(transactions: Transaction[]): void {
     const data = this._get();
-    data.transactions.push(...transactions);
+    data.transactions = [...transactions];
     this._set(data);
   }
 

@@ -16,8 +16,8 @@ export class MemoryCartStorage implements CartStorage {
     this.uuid = uuid;
   }
 
-  addTransactions(transactions: Transaction[]): void {
-    this.transactions.push(...transactions);
+  updateTransactions(transactions: Transaction[]): void {
+    this.transactions = [...transactions];
   }
 
   popTransactions(): Transaction[] {

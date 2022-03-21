@@ -40,7 +40,9 @@ export class Cart {
   }
 
   addTransaction(transaction: Transaction) {
-    this.cartStorage.addTransactions([transaction]);
+    this.cartStorage.updateTransactions(
+      this.mergeTransactions(this.cartStorage.getTransactions(), [transaction])
+    );
     this.notifyCartUpdated();
   }
 
@@ -53,6 +55,34 @@ export class Cart {
     cartData.applyTransactions(this.cartStorage.getTransactions());
     cartData.syncError = this.syncError;
     return cartData;
+  }
+
+  /**
+   * Merge transactions of list transactions2 into transactions1. Return the list of
+   * transactions in transactions1, possibly modified with mergeable transactions in
+   * transactions2. Also return transactions of transactions2 that could not be merged
+   * in transactions1.
+   * @param transactions1
+   * @param transactions2
+   */
+  // eslint-disable-next-line class-methods-use-this
+  mergeTransactions(
+    transactions1: Transaction[], transactions2: Transaction[]
+  ): Transaction[] {
+    const res = [...transactions1];
+    for (const transaction2 of transactions2) {
+      let merged = false;
+      for (const transaction1 of transactions1) {
+        if (transaction1.merge(transaction2)) {
+          merged = true;
+          break;
+        }
+      }
+      if (!merged) {
+        res.push(transaction2);
+      }
+    }
+    return res.filter(item => item.quantity > 0);
   }
 
   async sync(): Promise<boolean> {
@@ -76,7 +106,9 @@ export class Cart {
       this.syncError = true; // TODO (error.status !== 503);
       // In case of error, assume the transactions have not been applied, keep them for
       // an ulterior sync.
-      this.cartStorage.addTransactions(txs);
+      this.cartStorage.updateTransactions(
+        this.mergeTransactions(txs, this.cartStorage.getTransactions())
+      );
     }
     this.notifyCartUpdated();
     return success;
