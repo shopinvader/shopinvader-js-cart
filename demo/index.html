@@ -30,7 +30,7 @@
                sync error: ${cartData.syncError}
             </p>
             <ul>
-              ${cartData.items.map(item => `<li>product: ${item.productId}, quantity: ${item.quantity}`)}
+              ${cartData.lines.map(item => `<li>product: ${item.productId}, quantity: ${item.quantity}`)}
             </ul>
           `;
         }

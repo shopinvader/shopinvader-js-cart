@@ -8,16 +8,16 @@ export class CartData {
 
   public syncError: boolean = false;
 
-  public items: CartLineData[] = [];
+  public lines: CartLineData[] = [];
 
   public erpCart: any;
 
   static fromErpCart(erpCart: any): CartData {
     const cartData = new this();
     cartData.erpCart = erpCart;
-    cartData.items = [];
+    cartData.lines = [];
     if (erpCart) {
-      for (const erpCartLine of erpCart.items) {
+      for (const erpCartLine of erpCart.lines) {
         cartData.addItem(CartLineData.fromErpCartLine(erpCartLine));
       }
     }
@@ -25,11 +25,11 @@ export class CartData {
   }
 
   addItem(item: CartLineData) {
-    this.items.push(item);
+    this.lines.push(item);
   }
 
   getItem(productId: number): CartLineData | undefined {
-    return this.items.find(item => item.productId === productId);
+    return this.lines.find(item => item.productId === productId);
   }
 
   applyTransactions(transactions: CartTransaction[]) {
@@ -41,8 +41,8 @@ export class CartData {
         cartLineData.applyTransaction(transaction);
       }
     }
-    // remove items with quantity <= 0
-    this.items = this.items.filter(item => item.quantity > 0);
+    // remove lines with quantity <= 0
+    this.lines = this.lines.filter(item => item.quantity > 0);
     this.hasPendingTransactions = transactions.length > 0;
   }
 }
