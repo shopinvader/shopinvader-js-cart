@@ -82,7 +82,7 @@ export class Cart {
         res.push(transaction2);
       }
     }
-    return res.filter(item => item.quantity > 0);
+    return res.filter(tx => tx.quantity > 0);
   }
 
   async sync(): Promise<boolean> {

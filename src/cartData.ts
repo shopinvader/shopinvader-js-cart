@@ -18,31 +18,31 @@ export class CartData {
     cartData.lines = [];
     if (erpCart) {
       for (const erpCartLine of erpCart.lines) {
-        cartData.addItem(CartLineData.fromErpCartLine(erpCartLine));
+        cartData.addLine(CartLineData.fromErpCartLine(erpCartLine));
       }
     }
     return cartData;
   }
 
-  addItem(item: CartLineData) {
-    this.lines.push(item);
+  addLine(line: CartLineData) {
+    this.lines.push(line);
   }
 
-  getItem(productId: number): CartLineData | undefined {
-    return this.lines.find(item => item.productId === productId);
+  getLine(productId: number): CartLineData | undefined {
+    return this.lines.find(line => line.productId === productId);
   }
 
   applyTransactions(transactions: CartTransaction[]) {
     for (const transaction of transactions) {
-      const cartLineData = this.getItem(transaction.productId);
+      const cartLineData = this.getLine(transaction.productId);
       if (!cartLineData) {
-        this.addItem(CartLineData.fromTransaction(transaction));
+        this.addLine(CartLineData.fromTransaction(transaction));
       } else {
         cartLineData.applyTransaction(transaction);
       }
     }
     // remove lines with quantity <= 0
-    this.lines = this.lines.filter(item => item.quantity > 0);
+    this.lines = this.lines.filter(line => line.quantity > 0);
     this.hasPendingTransactions = transactions.length > 0;
   }
 }

@@ -10,16 +10,16 @@ describe('ShopinvaderJsCart', () => {
     const productId: number = 1000;
     const cart = new Cart(null, new MemoryCartStorage());
     cart.addTransaction(new CartTransaction(productId, 1));
-    const item = cart.getData().getItem(productId);
-    expect(item).to.exist;
-    expect(item?.hasPendingTransactions).to.be.true;
-    expect(item?.quantity).to.equal(1);
+    const line = cart.getData().getLine(productId);
+    expect(line).to.exist;
+    expect(line?.hasPendingTransactions).to.be.true;
+    expect(line?.quantity).to.equal(1);
     cart.addTransaction(new CartTransaction(productId, 2));
-    const item2 = cart.getData().getItem(productId);
-    expect(item2?.quantity).to.equal(3);
+    const line2 = cart.getData().getLine(productId);
+    expect(line2?.quantity).to.equal(3);
     cart.addTransaction(new CartTransaction(productId, -3));
-    const item3 = cart.getData().getItem(productId);
-    expect(item3).to.be.undefined;
+    const line3 = cart.getData().getLine(productId);
+    expect(line3).to.be.undefined;
   });
 
   it('test hasPendingTransactions', () => {
