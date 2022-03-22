@@ -1,7 +1,7 @@
 // Copyright (c) ACSONE SA/NV 2022
 
 import { CartLineData } from './cartLineData.js';
-import { Transaction } from './transaction.js';
+import { CartTransaction } from './cartTransaction.js';
 
 export class CartData {
   public hasPendingTransactions: boolean = false;
@@ -32,7 +32,7 @@ export class CartData {
     return this.items.find(item => item.productId === productId);
   }
 
-  applyTransactions(transactions: Transaction[]) {
+  applyTransactions(transactions: CartTransaction[]) {
     for (const transaction of transactions) {
       const cartLineData = this.getItem(transaction.productId);
       if (!cartLineData) {

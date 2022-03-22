@@ -1,7 +1,7 @@
 // Copyright (c) ACSONE SA/NV 2022
 
 import { CartData } from './cartData.js';
-import { Transaction } from './transaction.js';
+import { CartTransaction } from './cartTransaction.js';
 import { CartObserver } from './cartObserver.js';
 import { CartStorage } from './cartStorage.js';
 
@@ -39,7 +39,7 @@ export class Cart {
     }
   }
 
-  addTransaction(transaction: Transaction) {
+  addTransaction(transaction: CartTransaction) {
     this.cartStorage.updateTransactions(
       this.mergeTransactions(this.cartStorage.getTransactions(), [transaction])
     );
@@ -67,8 +67,8 @@ export class Cart {
    */
   // eslint-disable-next-line class-methods-use-this
   mergeTransactions(
-    transactions1: Transaction[], transactions2: Transaction[]
-  ): Transaction[] {
+    transactions1: CartTransaction[], transactions2: CartTransaction[]
+  ): CartTransaction[] {
     const res = [...transactions1];
     for (const transaction2 of transactions2) {
       let merged = false;

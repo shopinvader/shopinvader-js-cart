@@ -17,7 +17,7 @@
 
     <script type="module">
       import { Cart } from '../dist/src/cart.js';
-      import { Transaction } from '../dist/src/transaction.js';
+      import { CartTransaction } from '../dist/src/cartTransaction.js';
       import { WebStorageCartStorage } from '../dist/src/webStorageCartStorage.js';
 
       class DemoObserver {
@@ -38,10 +38,10 @@
       cart.registerObserver(observer);
       observer.onCartUpdated(cart);
 
-      document.getElementById("p1000").addEventListener("click", () => cart.addTransaction(new Transaction(1000, 1)));
-      document.getElementById("m1000").addEventListener("click", () => cart.addTransaction(new Transaction(1000, -1)));
-      document.getElementById("p2000").addEventListener("click", () => cart.addTransaction(new Transaction(2000, 1)));
-      document.getElementById("m2000").addEventListener("click", () => cart.addTransaction(new Transaction(2000, -1)));
+      document.getElementById("p1000").addEventListener("click", () => cart.addTransaction(new CartTransaction(1000, 1)));
+      document.getElementById("m1000").addEventListener("click", () => cart.addTransaction(new CartTransaction(1000, -1)));
+      document.getElementById("p2000").addEventListener("click", () => cart.addTransaction(new CartTransaction(2000, 1)));
+      document.getElementById("m2000").addEventListener("click", () => cart.addTransaction(new CartTransaction(2000, -1)));
     </script>
   </body>
 </html>

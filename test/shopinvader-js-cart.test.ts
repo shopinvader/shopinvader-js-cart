@@ -3,21 +3,21 @@
 import { expect } from '@open-wc/testing';
 import { Cart } from '../src/index.js';
 import { MemoryCartStorage } from '../src/memoryCartStorage.js';
-import { Transaction } from '../src/transaction.js';
+import { CartTransaction } from '../src/cartTransaction.js';
 
 describe('ShopinvaderJsCart', () => {
   it('test transaction', () => {
     const productId: number = 1000;
     const cart = new Cart(null, new MemoryCartStorage());
-    cart.addTransaction(new Transaction(productId, 1));
+    cart.addTransaction(new CartTransaction(productId, 1));
     const item = cart.getData().getItem(productId);
     expect(item).to.exist;
     expect(item?.hasPendingTransactions).to.be.true;
     expect(item?.quantity).to.equal(1);
-    cart.addTransaction(new Transaction(productId, 2));
+    cart.addTransaction(new CartTransaction(productId, 2));
     const item2 = cart.getData().getItem(productId);
     expect(item2?.quantity).to.equal(3);
-    cart.addTransaction(new Transaction(productId, -3));
+    cart.addTransaction(new CartTransaction(productId, -3));
     const item3 = cart.getData().getItem(productId);
     expect(item3).to.be.undefined;
   });
@@ -26,16 +26,16 @@ describe('ShopinvaderJsCart', () => {
     const productId: number = 1000;
     const cart = new Cart(null, new MemoryCartStorage());
     expect(cart.getData().hasPendingTransactions).to.be.false;
-    cart.addTransaction(new Transaction(productId, 2));
+    cart.addTransaction(new CartTransaction(productId, 2));
     expect(cart.getData().hasPendingTransactions).to.be.true;
-    cart.addTransaction(new Transaction(productId, -2));
+    cart.addTransaction(new CartTransaction(productId, -2));
     expect(cart.hasPendingTransactions()).to.be.false;
     expect(cart.getData().hasPendingTransactions).to.be.false;
   });
 
   it("test mergeTransactions", () => {
-    const transactions1 = [new Transaction(1000, 1), new Transaction(2000, 3), new Transaction(4000, 2)];
-    const transactions2 = [new Transaction(1000, 5), new Transaction(3000, 7), new Transaction(4000, -3)];
+    const transactions1 = [new CartTransaction(1000, 1), new CartTransaction(2000, 3), new CartTransaction(4000, 2)];
+    const transactions2 = [new CartTransaction(1000, 5), new CartTransaction(3000, 7), new CartTransaction(4000, -3)];
     const cart = new Cart(null, new MemoryCartStorage());
     const res = cart.mergeTransactions(transactions1, transactions2);
     expect(res.length).to.be.equal(3);

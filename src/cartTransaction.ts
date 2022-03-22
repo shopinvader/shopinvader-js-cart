@@ -2,7 +2,7 @@
 
 import { v4 as uuidv4 } from 'uuid';
 
-export class Transaction {
+export class CartTransaction {
   public readonly uuid: string;
 
   public readonly productId: number;
@@ -15,11 +15,11 @@ export class Transaction {
     this.uuid = uuid || uuidv4();
   }
 
-  isForSameCartLine(other: Transaction): boolean {
+  isForSameCartLine(other: CartTransaction): boolean {
     return other.productId === this.productId;
   }
 
-  merge(other: Transaction): boolean {
+  merge(other: CartTransaction): boolean {
     if (!this.isForSameCartLine(other)) {
       return false;
     }

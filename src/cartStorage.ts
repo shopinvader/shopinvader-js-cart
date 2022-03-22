@@ -1,11 +1,11 @@
 // Copyright (c) ACSONE SA/NV 2022
 
-import { Transaction } from './transaction.js';
+import { CartTransaction } from './cartTransaction.js';
 
 export interface CartStorage {
-  getTransactions(): Transaction[];
-  updateTransactions(transactions: Transaction[]): void;
-  popTransactions(): Transaction[];
+  getTransactions(): CartTransaction[];
+  updateTransactions(transactions: CartTransaction[]): void;
+  popTransactions(): CartTransaction[];
   setUuid(uuid: string | null): void;
   getUuid(): string | null;
 }

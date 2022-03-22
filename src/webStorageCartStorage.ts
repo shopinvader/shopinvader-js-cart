@@ -2,14 +2,14 @@
 
 /* eslint-disable max-classes-per-file */
 import { CartStorage } from './cartStorage.js';
-import { Transaction } from './transaction.js';
+import { CartTransaction } from './cartTransaction.js';
 
 const KEY: string = 'shopinvader-js-cart-data';
 
 class Data {
   uuid: string | null = null;
 
-  transactions: Transaction[] = [];
+  transactions: CartTransaction[] = [];
 }
 
 export class WebStorageCartStorage implements CartStorage {
@@ -26,7 +26,7 @@ export class WebStorageCartStorage implements CartStorage {
     }
     try {
       const res = JSON.parse(data) as Data;
-      res.transactions = res.transactions.map(t => new Transaction(t.productId, t.quantity, t.uuid));
+      res.transactions = res.transactions.map(t => new CartTransaction(t.productId, t.quantity, t.uuid));
       return res;
     } catch (error) {
       // we can't grok what we have in local storage, discard it
@@ -48,13 +48,13 @@ export class WebStorageCartStorage implements CartStorage {
     this._set(data);
   }
 
-  updateTransactions(transactions: Transaction[]): void {
+  updateTransactions(transactions: CartTransaction[]): void {
     const data = this._get();
     data.transactions = [...transactions];
     this._set(data);
   }
 
-  popTransactions(): Transaction[] {
+  popTransactions(): CartTransaction[] {
     const data = this._get();
     const txs = data.transactions;
     data.transactions = [];
@@ -62,7 +62,7 @@ export class WebStorageCartStorage implements CartStorage {
     return txs;
   }
 
-  getTransactions(): Transaction[] {
+  getTransactions(): CartTransaction[] {
     return [...this._get().transactions];
   }
 }

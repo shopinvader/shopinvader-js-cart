@@ -1,6 +1,6 @@
 // Copyright (c) ACSONE SA/NV 2022
 
-import { Transaction } from './transaction.js';
+import { CartTransaction } from './cartTransaction.js';
 
 export class CartLineData {
   public hasPendingTransactions: boolean;
@@ -32,11 +32,11 @@ export class CartLineData {
     );
   }
 
-  static fromTransaction(transaction: Transaction): CartLineData {
+  static fromTransaction(transaction: CartTransaction): CartLineData {
     return new this(true, transaction.productId, transaction.quantity);
   }
 
-  applyTransaction(transaction: Transaction) {
+  applyTransaction(transaction: CartTransaction) {
     this.quantity += transaction.quantity;
     this.hasPendingTransactions = true;
   }
