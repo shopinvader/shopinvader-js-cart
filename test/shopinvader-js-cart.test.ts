@@ -33,9 +33,17 @@ describe('ShopinvaderJsCart', () => {
     expect(cart.getData().hasPendingTransactions).to.be.false;
   });
 
-  it("test mergeTransactions", () => {
-    const transactions1 = [new CartTransaction(1000, 1), new CartTransaction(2000, 3), new CartTransaction(4000, 2)];
-    const transactions2 = [new CartTransaction(1000, 5), new CartTransaction(3000, 7), new CartTransaction(4000, -3)];
+  it('test mergeTransactions', () => {
+    const transactions1 = [
+      new CartTransaction(1000, 1),
+      new CartTransaction(2000, 3),
+      new CartTransaction(4000, 2),
+    ];
+    const transactions2 = [
+      new CartTransaction(1000, 5),
+      new CartTransaction(3000, 7),
+      new CartTransaction(4000, -3),
+    ];
     const cart = new Cart(null, new MemoryCartStorage());
     const res = cart.mergeTransactions(transactions1, transactions2);
     expect(res.length).to.be.equal(3);

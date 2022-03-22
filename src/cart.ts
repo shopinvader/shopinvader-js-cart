@@ -67,7 +67,8 @@ export class Cart {
    */
   // eslint-disable-next-line class-methods-use-this
   mergeTransactions(
-    transactions1: CartTransaction[], transactions2: CartTransaction[]
+    transactions1: CartTransaction[],
+    transactions2: CartTransaction[]
   ): CartTransaction[] {
     const res = [...transactions1];
     for (const transaction2 of transactions2) {
