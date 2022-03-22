@@ -24,7 +24,11 @@
         onCartUpdated(cart) {
           const cartData = cart.getData();
           document.getElementById("cart").innerHTML = `
-            <p>pending transactions: ${cartData.hasPendingTransactions}</p>
+            <p>
+               pending transactions: ${cartData.hasPendingTransactions}
+               |
+               sync error: ${cartData.syncError}
+            </p>
             <ul>
               ${cartData.items.map(item => `<li>product: ${item.productId}, quantity: ${item.quantity}`)}
             </ul>
