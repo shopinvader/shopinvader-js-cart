@@ -45,7 +45,7 @@
 
       const cart = new Cart(erpFetch, new WebStorageCartStorage(window.localStorage));
       cart.registerObserver(observer);
-      observer.onCartUpdated(cart);
+      cart.sync();
 
       document.getElementById("p1000").addEventListener("click", () => cart.addTransaction(new CartTransaction(1000, 1)));
       document.getElementById("m1000").addEventListener("click", () => cart.addTransaction(new CartTransaction(1000, -1)));
