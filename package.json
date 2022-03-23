@@ -1,16 +1,16 @@
 {
-  "name": "shopinvader-js-cart",
+  "name": "@shopinvader/fetch",
   "description": "Webcomponent shopinvader-js-cart following open-wc recommendations",
   "license": "MIT",
-  "author": "shopinvader-js-cart",
-  "version": "0.0.0",
+  "author": "ACSONE SA/NV",
+  "version": "0.1.0",
   "main": "dist/src/index.js",
   "module": "dist/src/index.js",
   "exports": {
     ".": "./dist/src/index.js"
   },
   "scripts": {
-    "start": "tsc && concurrently -k -r \"tsc --watch --preserveWatchOutput\" \"wds\"",
+    "start": "tsc && concurrently -k -r \"tsc --watch --preserveWatchOutput\" \"wds --node-resolve\"",
     "build": "tsc",
     "prepublish": "tsc",
     "lint": "eslint --ext .ts,.html . --ignore-path .gitignore && prettier \"**/*.ts\" --check --ignore-path .gitignore",
@@ -24,6 +24,7 @@
   "devDependencies": {
     "@open-wc/eslint-config": "^4.3.0",
     "@open-wc/testing": "next",
+    "@shopinvader/fetch": "github:acsone/shopinvader-js#esm-sbi",
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",

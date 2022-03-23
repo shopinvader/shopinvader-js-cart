@@ -13,11 +13,12 @@
       <h2>Catalog</h2>
       <p>Product 1000 <button id="p1000">+</button><button id="m1000">-</button></p>
       <p>Product 2000 <button id="p2000">+</button><button id="m2000">-</button></p>
-      <h2>Cart</h2>
+      <h2>Cart <button id="sync">sync</button></h2>
       <div id="cart"></div>
     </div>
 
     <script type="module">
+      import { ErpFetch } from '../node_modules/@shopinvader/fetch/index.js';
       import { Cart } from '../dist/src/cart.js';
       import { CartTransaction } from '../dist/src/cartTransaction.js';
       import { WebStorageCartStorage } from '../dist/src/webStorageCartStorage.js';
@@ -40,7 +41,9 @@
 
       const observer = new DemoObserver();
 
-      const cart = new Cart(null, new WebStorageCartStorage(window.localStorage));
+      const erpFetch = new ErpFetch("http://localhost:8002");
+
+      const cart = new Cart(erpFetch, new WebStorageCartStorage(window.localStorage));
       cart.registerObserver(observer);
       observer.onCartUpdated(cart);
 
@@ -48,6 +51,7 @@
       document.getElementById("m1000").addEventListener("click", () => cart.addTransaction(new CartTransaction(1000, -1)));
       document.getElementById("p2000").addEventListener("click", () => cart.addTransaction(new CartTransaction(2000, 1)));
       document.getElementById("m2000").addEventListener("click", () => cart.addTransaction(new CartTransaction(2000, -1)));
+      document.getElementById("sync").addEventListener("click", () => cart.sync());
     </script>
   </body>
 </html>
