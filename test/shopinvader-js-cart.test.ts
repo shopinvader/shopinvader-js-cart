@@ -38,20 +38,24 @@ describe('ShopinvaderJsCart', () => {
       new CartTransaction(1000, 1),
       new CartTransaction(2000, 3),
       new CartTransaction(4000, 2),
+      new CartTransaction(5000, 2),
     ];
     const transactions2 = [
       new CartTransaction(1000, 5),
       new CartTransaction(3000, 7),
       new CartTransaction(4000, -3),
+      new CartTransaction(5000, -2),
     ];
     const cart = new Cart(null, new MemoryCartStorage());
     const res = cart.mergeTransactions(transactions1, transactions2);
-    expect(res.length).to.be.equal(3);
+    expect(res.length).to.be.equal(4);
     expect(res[0].productId).to.be.equal(1000);
     expect(res[0].quantity).to.be.equal(6);
     expect(res[1].productId).to.be.equal(2000);
     expect(res[1].quantity).to.be.equal(3);
-    expect(res[2].productId).to.be.equal(3000);
-    expect(res[2].quantity).to.be.equal(7);
+    expect(res[2].productId).to.be.equal(4000);
+    expect(res[2].quantity).to.be.equal(-1);
+    expect(res[3].productId).to.be.equal(3000);
+    expect(res[3].quantity).to.be.equal(7);
   });
 });
