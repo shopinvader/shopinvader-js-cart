@@ -55,59 +55,47 @@ export class Cart {
     return cartData;
   }
 
-  /**
-   * Merge transactions of list transactions2 into transactions1. Return the list of
-   * transactions in transactions1, possibly modified with mergeable transactions in
-   * transactions2. Also return transactions of transactions2 that could not be merged
-   * in transactions1.
-   * @param transactions1
-   * @param transactions2
-   */
-  // eslint-disable-next-line class-methods-use-this
-  mergeTransactions(
-    transactions1: CartTransaction[],
-    transactions2: CartTransaction[]
-  ): CartTransaction[] {
-    const res = [...transactions1];
-    for (const transaction2 of transactions2) {
-      let merged = false;
-      for (const transaction1 of transactions1) {
-        if (transaction1.merge(transaction2)) {
-          merged = true;
-          break;
-        }
-      }
-      if (!merged) {
-        res.push(transaction2);
-      }
-    }
-    return res.filter(tx => tx.quantity !== 0);
-  }
-
   async sync(): Promise<boolean> {
     // Clear transactions list before posting, so new transactions can
     // be done by the user while the post occurs asynchronously.
     const txs = this.cartStorage.popTransactions();
     let success: boolean;
     try {
-      this.erpCart = await this.erpFetch.post('/cart/v2/sync', {
-        cart_uuid: this.cartStorage.getUuid(),
-        transactions: txs.map(transaction => transaction.toErpTransaction()),
-      });
-      success = true;
-      this.syncError = false;
-      this.cartStorage.setUuid(this.erpCart?.uuid);
+      const response = await this.erpFetch.post(
+        '/v2/cart/sync',
+        {
+          uuid: this.cartStorage.getUuid(),
+          transactions: txs.map(transaction => transaction.toErpTransaction()),
+        },
+        {},
+        'response'
+      );
+      if (response.ok) {
+        this.erpCart = await response.json();
+        success = true;
+        this.syncError = false;
+        // TODO do we need to check the UUID ?
+        this.cartStorage.setUuid(this.erpCart?.uuid);
+      } else if (response.status === 503) {
+        // ERP is not available, this is not an error, the cart will simply stay
+        // with pending transactions.
+        console.warn('shopinvader cart sync: ERP not available');
+        success = false;
+        this.syncError = false;
+      } else {
+        console.warn(`shopinvader cart sync: http ${response.status}}`);
+        success = false;
+        this.syncError = true;
+      }
     } catch (error) {
-      console.error(error);
+      console.warn(`shopinvader cart sync: exception ${error}}`);
       success = false;
-      // If Odoo is not available, this is not an error, the cart will simply stay
-      // with pending transactions.
-      this.syncError = true; // TODO (error.status !== 503);
+      this.syncError = true;
+    }
+    if (!success) {
       // In case of error, assume the transactions have not been applied, keep them for
       // an ulterior sync.
-      this.cartStorage.updateTransactions(
-        this.mergeTransactions(txs, this.cartStorage.getTransactions())
-      );
+      this.cartStorage.addTransactions(txs);
     }
     this.notifyCartUpdated();
     return success;
