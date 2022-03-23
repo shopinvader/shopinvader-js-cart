@@ -41,8 +41,11 @@ export class CartData {
         cartLineData.applyTransaction(transaction);
       }
     }
-    // remove lines with quantity <= 0
-    this.lines = this.lines.filter(line => line.quantity > 0);
+    // Remove lines with quantity = 0. We keep lines with a negative quantity
+    // as they signify we are in a situation where the local view of the cart
+    // is seriously desynchronized with the ERP but this shows the user a
+    // negative transaction is going to be applied.
+    this.lines = this.lines.filter(line => line.quantity !== 0);
     this.hasPendingTransactions = transactions.length > 0;
   }
 }

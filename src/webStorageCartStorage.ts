@@ -50,9 +50,9 @@ export class WebStorageCartStorage implements CartStorage {
     this._set(data);
   }
 
-  updateTransactions(transactions: CartTransaction[]): void {
+  addTransactions(transactions: CartTransaction[]): void {
     const data = this._get();
-    data.transactions = [...transactions];
+    data.transactions.push(...transactions);
     this._set(data);
   }
 

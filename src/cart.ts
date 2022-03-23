@@ -40,9 +40,7 @@ export class Cart {
   }
 
   addTransaction(transaction: CartTransaction) {
-    this.cartStorage.updateTransactions(
-      this.mergeTransactions(this.cartStorage.getTransactions(), [transaction])
-    );
+    this.cartStorage.addTransactions([transaction]);
     this.notifyCartUpdated();
   }
 
