@@ -1,3 +1,4 @@
+import asyncio
 import itertools
 import uuid
 from collections import defaultdict
@@ -61,28 +62,23 @@ class Cart(BaseModel):
     def apply_transactions(
         self, transactions: list[SyncTransaction], applied_transactions_uuids: set[str]
     ) -> None:
-        tx_by_productid = defaultdict(list)
-        for tx in transactions:
-            tx_by_productid[tx.product_id].append(tx)
-        for line in self.lines:
-            try:
-                txs = tx_by_productid.pop(line.product_id)
-            except KeyError:
-                continue
+        for product_id, txs in itertools.groupby(
+            transactions, key=lambda tx: tx.product_id
+        ):
+            for line in self.lines:
+                if line.product_id == product_id:
+                    break
+            else:
+                line = CartLine(product_id=product_id, quantity=0)
+                self.lines.append(line)
             for tx in txs:
                 if tx.uuid in applied_transactions_uuids:
-                    logging.warning(f"Ignoring already applied transaction {tx.uuid}")
+                    logging.warn(f"Ignoring already applied transaction {tx.uuid}")
                     continue
-                line.quantity = max(0, line.quantity + tx.quantity)
+                line.quantity += tx.quantity
                 applied_transactions_uuids.add(tx.uuid)
-        for tx in itertools.chain(*tx_by_productid.values()):
-            if tx.uuid in applied_transactions_uuids:
-                logging.warning(f"Ignoring already applied transaction {tx.uuid}")
-                continue
-            self.lines.append(
-                CartLine(product_id=tx.product_id, quantity=max(0, tx.quantity))
-            )
-            applied_transactions_uuids.add(tx.uuid)
+            if line.quantity < 0:
+                line.quantity = 0
 
 
 class CartDatabase:
@@ -133,4 +129,7 @@ async def sync(data: Sync) -> Cart:
             cart = None
     if cart:
         cart.apply_transactions(data.transactions, cart_db.applied_transactions_uuids)
+        if data.transactions:
+            # simulate heavy computation
+            await asyncio.sleep(2)
     return cart
