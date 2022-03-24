@@ -1,6 +1,6 @@
 {
-  "name": "@shopinvader/fetch",
-  "description": "Webcomponent shopinvader-js-cart following open-wc recommendations",
+  "name": "@shopinvader/cart",
+  "description": "Shopinvader async cart library",
   "license": "MIT",
   "author": "ACSONE SA/NV",
   "version": "0.1.0",

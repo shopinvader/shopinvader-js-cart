@@ -18,10 +18,8 @@
     </div>
 
     <script type="module">
-      import { ErpFetch } from '../node_modules/@shopinvader/fetch/index.js';
-      import { Cart } from '../dist/src/cart.js';
-      import { CartTransaction } from '../dist/src/cartTransaction.js';
-      import { WebStorageCartStorage } from '../dist/src/webStorageCartStorage.js';
+      import { ErpFetch } from '@shopinvader/fetch';
+      import { Cart, CartTransaction, WebStorageCartStorage } from '@shopinvader/cart';
 
       class DemoObserver {
         onCartUpdated(cart) {
