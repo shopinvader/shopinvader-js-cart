@@ -89,6 +89,16 @@ npm start
 
 To run a local development server that serves the basic demo located in `demo/index.html`
 
+This works best when the demo backend server is running. To do this:
+
+```bash
+cd demo
+python3 -m venv .venv
+source .venv/bin/activate
+python3 -m pip install requirements.txt.in
+python3 demoserver.py
+```
+
 ## Authors
 
 - Laurent Mignon <laurent.mignon@acsone.eu>

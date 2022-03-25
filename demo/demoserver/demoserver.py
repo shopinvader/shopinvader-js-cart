@@ -1,10 +1,10 @@
 import asyncio
 import itertools
-import uuid
-from collections import defaultdict
 import logging
+import uuid
 
-from fastapi import FastAPI, Request, HTTPException
+import uvicorn
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from rich.logging import RichHandler
@@ -133,3 +133,7 @@ async def sync(data: Sync) -> Cart:
             # simulate heavy computation
             await asyncio.sleep(2)
     return cart
+
+
+if __name__ == "__main__":
+    uvicorn.main(["demoserver:app", "--reload", "--port", "8002"])
