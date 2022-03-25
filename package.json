@@ -4,7 +4,7 @@
   "license": "MIT",
   "author": "ACSONE SA/NV",
   "version": "0.1.0",
-  "main": "dist/src/index.js",
+  "type": "module",
   "module": "dist/src/index.js",
   "exports": {
     ".": "./dist/src/index.js"
