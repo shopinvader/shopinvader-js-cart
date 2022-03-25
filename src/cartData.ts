@@ -8,6 +8,8 @@ export class CartData {
 
   public syncError: boolean = false;
 
+  public erpNotAvailable: boolean = false;
+
   public lines: CartLineData[] = [];
 
   public erpCart: any;

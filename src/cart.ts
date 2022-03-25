@@ -15,6 +15,9 @@ export class Cart {
   // true if last sync failed
   private syncError: boolean = false;
 
+  // true if last sync returned a 503 Service Unavailable
+  private erpNotAvailable: boolean = false;
+
   private observers: CartObserver[] = [];
 
   constructor(erpFetch: any, cartStorage: CartStorage) {
@@ -52,6 +55,7 @@ export class Cart {
     const cartData = CartData.fromErpCart(this.erpCart);
     cartData.applyTransactions(this.cartStorage.getTransactions());
     cartData.syncError = this.syncError;
+    cartData.erpNotAvailable = this.erpNotAvailable;
     return cartData;
   }
 
@@ -74,6 +78,7 @@ export class Cart {
         this.erpCart = await response.json();
         success = true;
         this.syncError = false;
+        this.erpNotAvailable = false;
         // TODO do we need to check the UUID ?
         this.cartStorage.setUuid(this.erpCart?.uuid);
       } else if (response.status === 503) {
@@ -82,15 +87,19 @@ export class Cart {
         console.warn('shopinvader cart sync: ERP not available');
         success = false;
         this.syncError = false;
+        this.erpNotAvailable = true;
       } else {
         console.warn(`shopinvader cart sync: http ${response.status}}`);
         success = false;
         this.syncError = true;
+        this.erpNotAvailable = false;
       }
     } catch (error) {
       console.warn(`shopinvader cart sync: exception ${error}}`);
       success = false;
       this.syncError = true;
+      // Yet some exceptions may mean the erp is not available ?
+      this.erpNotAvailable = false;
     }
     if (!success) {
       // In case of error, assume the transactions have not been applied, keep them for
