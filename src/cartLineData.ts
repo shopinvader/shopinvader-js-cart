@@ -27,7 +27,7 @@ export class CartLineData {
     return new this(
       false,
       erpCartLine.product_id,
-      erpCartLine.quantity,
+      erpCartLine.qty,
       erpCartLine
     );
   }
