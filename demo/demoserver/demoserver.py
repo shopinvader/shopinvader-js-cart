@@ -52,7 +52,7 @@ class Sync(BaseModel):
 
 class CartLine(BaseModel):
     product_id: int
-    quantity: int
+    qty: int
 
 
 class Cart(BaseModel):
@@ -69,16 +69,16 @@ class Cart(BaseModel):
                 if line.product_id == product_id:
                     break
             else:
-                line = CartLine(product_id=product_id, quantity=0)
+                line = CartLine(product_id=product_id, qty=0)
                 self.lines.append(line)
             for tx in txs:
                 if tx.uuid in applied_transactions_uuids:
                     logging.warn(f"Ignoring already applied transaction {tx.uuid}")
                     continue
-                line.quantity += tx.quantity
+                line.qty += tx.quantity
                 applied_transactions_uuids.add(tx.uuid)
-            if line.quantity < 0:
-                line.quantity = 0
+            if line.qty < 0:
+                line.qty = 0
 
 
 class CartDatabase:
