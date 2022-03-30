@@ -7,11 +7,11 @@ export class CartTransaction {
 
   public readonly productId: number;
 
-  public quantity: number;
+  public qty: number;
 
-  constructor(productId: number, quantity: number, uuid?: string) {
+  constructor(productId: number, qty: number, uuid?: string) {
     this.productId = productId;
-    this.quantity = quantity;
+    this.qty = qty;
     this.uuid = uuid || uuidv4();
   }
 
@@ -23,7 +23,7 @@ export class CartTransaction {
     if (!this.isForSameCartLine(other)) {
       return false;
     }
-    this.quantity += other.quantity;
+    this.qty += other.qty;
     return true;
   }
 
@@ -32,7 +32,7 @@ export class CartTransaction {
     return {
       uuid: this.uuid,
       product_id: this.productId,
-      quantity: this.quantity,
+      qty: this.qty,
     };
   }
 }

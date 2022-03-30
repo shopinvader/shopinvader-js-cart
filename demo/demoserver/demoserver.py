@@ -40,7 +40,7 @@ async def set_online():
 
 
 class SyncTransaction(BaseModel):
-    quantity: int
+    qty: int
     uuid: str
     product_id: int
 
@@ -75,7 +75,7 @@ class Cart(BaseModel):
                 if tx.uuid in applied_transactions_uuids:
                     logging.warn(f"Ignoring already applied transaction {tx.uuid}")
                     continue
-                line.qty += tx.quantity
+                line.qty += tx.qty
                 applied_transactions_uuids.add(tx.uuid)
             if line.qty < 0:
                 line.qty = 0

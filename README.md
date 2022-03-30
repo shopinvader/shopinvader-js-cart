@@ -40,7 +40,7 @@ const cart = Cart(
   new WebStorageCartStorage(window.localStorage)
 );
 cart.registerObjserver(observer);
-cart.addTransaction(new CartTransaction(productId, quantity));
+cart.addTransaction(new CartTransaction(productId, qty));
 cartData = cart.getData();
 // cartData.hasPendingTransactions indicates that transactions are pending synchronization
 // cartData.syncError indicates that there was an error syncing the cart with the ERP

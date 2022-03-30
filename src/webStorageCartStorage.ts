@@ -27,7 +27,7 @@ export class WebStorageCartStorage implements CartStorage {
     try {
       const res = JSON.parse(data) as Data;
       res.transactions = res.transactions.map(
-        t => new CartTransaction(t.productId, t.quantity, t.uuid)
+        t => new CartTransaction(t.productId, t.qty, t.uuid)
       );
       return res;
     } catch (error) {

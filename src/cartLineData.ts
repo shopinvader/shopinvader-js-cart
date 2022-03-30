@@ -7,19 +7,19 @@ export class CartLineData {
 
   public productId: number;
 
-  public quantity: number;
+  public qty: number;
 
   public erpCartLine: any;
 
   constructor(
     hasPendingTransactions: boolean,
     productId: number,
-    quantity: number,
+    qty: number,
     erpCartLine?: any
   ) {
     this.hasPendingTransactions = hasPendingTransactions;
     this.productId = productId;
-    this.quantity = quantity;
+    this.qty = qty;
     this.erpCartLine = erpCartLine;
   }
 
@@ -33,11 +33,11 @@ export class CartLineData {
   }
 
   static fromTransaction(transaction: CartTransaction): CartLineData {
-    return new this(true, transaction.productId, transaction.quantity);
+    return new this(true, transaction.productId, transaction.qty);
   }
 
   applyTransaction(transaction: CartTransaction) {
-    this.quantity += transaction.quantity;
+    this.qty += transaction.qty;
     this.hasPendingTransactions = true;
   }
 }
