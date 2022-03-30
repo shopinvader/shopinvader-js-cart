@@ -1,4 +1,4 @@
-# shopinvader-js-cart
+# @shopinvader/cart
 
 An asynchronous cart object, that works when the ERP is offline, by storing transactions
 that add or remove product quantities from the cart in local storage, and sending them
@@ -58,7 +58,7 @@ To automatically fix linting and formatting errors, run
 
 ```bash
 npm run format
-```
+```Asking
 
 ## Testing with Web Test Runner
 
