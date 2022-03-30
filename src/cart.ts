@@ -66,7 +66,7 @@ export class Cart {
     let success: boolean;
     try {
       const response = await this.erpFetch.post(
-        '/v2/cart/sync',
+        'v2/cart/sync',
         {
           uuid: this.cartStorage.getUuid(),
           transactions: txs.map(transaction => transaction.toErpTransaction()),
