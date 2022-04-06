@@ -18,6 +18,9 @@ export class Cart {
   // true if last sync returned a 503 Service Unavailable
   private erpNotAvailable: boolean = false;
 
+  // true while sync is in progress
+  private synchronizing: boolean = false;
+
   private observers: CartObserver[] = [];
 
   constructor(erpFetch: any, cartStorage: CartStorage) {
@@ -45,6 +48,7 @@ export class Cart {
   addTransaction(transaction: CartTransaction) {
     this.cartStorage.addTransactions([transaction]);
     this.notifyCartUpdated();
+    this.syncWithRetry();
   }
 
   hasPendingTransactions(): boolean {
@@ -59,12 +63,45 @@ export class Cart {
     return cartData;
   }
 
+  // Call sync while there are pending transactions. Retry with exponential backoff
+  // until it succeeds, with a maximum backoff delay of 1 minute.
+  private async syncWithRetry(force: boolean = true) {
+    const maxBackoff = 60 * 1000;
+    let forceSync = force;
+    if (this.synchronizing) {
+      console.log('Already synchronizing');
+      return;
+    }
+    this.synchronizing = true;
+    try {
+      let backoff = 1000;
+      while (forceSync || this.hasPendingTransactions()) {
+        console.log(
+          `sync force=${force} pending=${this.hasPendingTransactions()}`
+        );
+        // eslint-disable-next-line no-await-in-loop
+        const success = await this.sync();
+        if (success) {
+          forceSync = false;
+        } else {
+          console.log(`sleep ${backoff}`);
+          backoff = Math.min(backoff * 2, maxBackoff);
+          // eslint-disable-next-line no-await-in-loop, no-loop-func
+          await new Promise(resolve => setTimeout(resolve, backoff));
+        }
+      }
+    } finally {
+      this.synchronizing = false;
+    }
+  }
+
   async sync(): Promise<boolean> {
     // Clear transactions list before posting, so new transactions can
     // be done by the user while the post occurs asynchronously.
     const txs = this.cartStorage.popTransactions();
     let success: boolean;
     try {
+      console.log('v2/cart/sync');
       const response = await this.erpFetch.post(
         'v2/cart/sync',
         {
@@ -107,6 +144,7 @@ export class Cart {
       this.cartStorage.addTransactions(txs);
     }
     this.notifyCartUpdated();
+    console.log(`sync result: ${success}`);
     return success;
   }
 }

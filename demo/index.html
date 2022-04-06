@@ -13,7 +13,7 @@
       <h2>Catalog</h2>
       <p>Product 1000 <button id="p1000">+</button><button id="m1000">-</button></p>
       <p>Product 2000 <button id="p2000">+</button><button id="m2000">-</button></p>
-      <h2>Cart <button id="sync">sync</button></h2>
+      <h2>Cart <button id="sync">sync now</button></h2>
       <div id="cart"></div>
     </div>
 
@@ -23,6 +23,7 @@
 
       class DemoObserver {
         onCartUpdated(cart) {
+          console.log("onCartUpdated");
           const cartData = cart.getData();
           document.getElementById("cart").innerHTML = `
             <p>
@@ -31,7 +32,7 @@
                sync error: ${cartData.syncError}
             </p>
             <ul>
-              ${cartData.lines.map(line => `<li>product: ${line.productId}, qty: ${line.qty}`)}
+              ${cartData.lines.map(line => `<li>product: ${line.productId}, qty: ${line.qty} (pending transactions: ${line.hasPendingTransactions})</li>`).join('')}
             </ul>
           `;
         }
@@ -43,7 +44,7 @@
 
       const cart = new Cart(erpFetch, new WebStorageCartStorage(window.localStorage));
       cart.registerObserver(observer);
-      cart.sync();
+      cart.syncWithRetry(true);
 
       document.getElementById("p1000").addEventListener("click", () => cart.addTransaction(new CartTransaction(1000, 1)));
       document.getElementById("m1000").addEventListener("click", () => cart.addTransaction(new CartTransaction(1000, -1)));
