@@ -5,7 +5,7 @@ import { CartTransaction } from './cartTransaction.js';
 export interface CartStorage {
   getTransactions(): CartTransaction[];
   addTransactions(transactions: CartTransaction[]): void;
-  popTransactions(): CartTransaction[];
+  removeTransactions(transactions: CartTransaction[]): void;
   setUuid(uuid: string | null): void;
   getUuid(): string | null;
 }

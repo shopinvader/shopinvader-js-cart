@@ -20,10 +20,16 @@ export class MemoryCartStorage implements CartStorage {
     this.transactions.push(...transactions);
   }
 
-  popTransactions(): CartTransaction[] {
-    const txs = this.transactions;
-    this.transactions = [];
-    return txs;
+  // remove transactions which have the same uuid
+  removeTransactions(transactions: CartTransaction[]): void {
+    for (const transaction of transactions) {
+      const index = this.transactions.findIndex(
+        t => t.uuid === transaction.uuid
+      );
+      if (index !== -1) {
+        this.transactions.splice(index, 1);
+      }
+    }
   }
 
   getTransactions(): CartTransaction[] {

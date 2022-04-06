@@ -56,12 +56,18 @@ export class WebStorageCartStorage implements CartStorage {
     this._set(data);
   }
 
-  popTransactions(): CartTransaction[] {
+  // remove transactions which have the same uuid
+  removeTransactions(transactions: CartTransaction[]): void {
     const data = this._get();
-    const txs = data.transactions;
-    data.transactions = [];
+    for (const transaction of transactions) {
+      const index = data.transactions.findIndex(
+        t => t.uuid === transaction.uuid
+      );
+      if (index !== -1) {
+        data.transactions.splice(index, 1);
+      }
+    }
     this._set(data);
-    return txs;
   }
 
   getTransactions(): CartTransaction[] {

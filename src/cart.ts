@@ -98,7 +98,7 @@ export class Cart {
   async sync(): Promise<boolean> {
     // Clear transactions list before posting, so new transactions can
     // be done by the user while the post occurs asynchronously.
-    const txs = this.cartStorage.popTransactions();
+    const txs = this.cartStorage.getTransactions();
     let success: boolean;
     try {
       console.log('v2/cart/sync');
@@ -118,6 +118,7 @@ export class Cart {
         this.erpNotAvailable = false;
         // TODO do we need to check the UUID ?
         this.cartStorage.setUuid(this.erpCart?.uuid);
+        this.cartStorage.removeTransactions(txs);
       } else if (response.status === 503) {
         // ERP is not available, this is not an error, the cart will simply stay
         // with pending transactions.
@@ -137,11 +138,6 @@ export class Cart {
       this.syncError = true;
       // Yet some exceptions may mean the erp is not available ?
       this.erpNotAvailable = false;
-    }
-    if (!success) {
-      // In case of error, assume the transactions have not been applied, keep them for
-      // an ulterior sync.
-      this.cartStorage.addTransactions(txs);
     }
     this.notifyCartUpdated();
     console.log(`sync result: ${success}`);
