@@ -1,10 +1,13 @@
 import asyncio
 import itertools
+import json
 import logging
 import uuid
+from enum import Enum
+from pathlib import Path
 
 import uvicorn
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from rich.logging import RichHandler
@@ -55,13 +58,20 @@ class CartLine(BaseModel):
     qty: int
 
 
+class CartStatus(str, Enum):
+    open = "open"
+    submitted = "submitted"
+
+
 class Cart(BaseModel):
     uuid: str
+    status: CartStatus = CartStatus.open
     lines: list[CartLine] = []
 
     def apply_transactions(
         self, transactions: list[SyncTransaction], applied_transactions_uuids: set[str]
     ) -> None:
+        logging.info(f"Applying {transactions}")
         for product_id, txs in itertools.groupby(
             transactions, key=lambda tx: tx.product_id
         ):
@@ -81,37 +91,75 @@ class Cart(BaseModel):
                 line.qty = 0
 
 
+class CartNotFound(Exception):
+    pass
+
+
+class CartDatabaseData(BaseModel):
+    carts_by_uuid: dict[str, Cart] = {}
+    applied_transactions_uuids: set[str] = set()
+
+
 class CartDatabase:
     def __init__(self):
-        self.carts_by_uuid: dict[str, Cart] = {}
-        self.applied_transactions_uuids: set[str] = set()
+        try:
+            with open(self.data_path) as f:
+                data = json.load(f)
+                self.data = CartDatabaseData(**data)
+        except Exception as e:
+            logging.warn(f"Error {e} loading {self.data_path}, creating new database")
+            self.data = CartDatabaseData()
+
+    @property
+    def data_path(self):
+        return Path(__file__).parent / "demoserver.json"
+
+    def save(self):
+        with open(self.data_path, "w") as f:
+            f.write(self.data.json())
 
     def create_cart(self) -> Cart:
         cart = Cart(uuid=uuid.uuid4().hex)
-        self.carts_by_uuid[cart.uuid] = cart
+        self.data.carts_by_uuid[cart.uuid] = cart
         logging.info(f"Created cart f{cart.uuid}")
         return cart
 
     def find_open_cart(self, uuid: str) -> Cart:
         try:
-            return self.carts_by_uuid[uuid]
+            cart = self.data.carts_by_uuid[uuid]
         except KeyError:
             logging.warn(f"Cart {uuid} not found")
-            raise
+            raise CartNotFound()
+        else:
+            if cart.status != CartStatus.open:
+                logging.warn(f"Cart {uuid} is not open")
+                raise CartNotFound()
+            return cart
 
 
-cart_db = CartDatabase()
+cart_db_lock = asyncio.Lock()
+
+
+async def cart_db() -> CartDatabase:
+    async with cart_db_lock:
+      db = CartDatabase()
+      try:
+          yield db
+      except:
+          raise
+      else:
+          db.save()
 
 
 @app.post("/v2/cart/sync", response_model=Cart)
-async def sync(data: Sync) -> Cart:
+async def sync(data: Sync, cart_db: CartDatabase = Depends(cart_db)) -> Cart:
     if offline:
         raise HTTPException(status_code=503)
     if data.transactions:
         if data.uuid:
             try:
                 cart = cart_db.find_open_cart(uuid=data.uuid)
-            except KeyError:
+            except CartNotFound:
                 cart = cart_db.create_cart()
         else:
             cart = cart_db.create_cart()
@@ -119,7 +167,7 @@ async def sync(data: Sync) -> Cart:
         if data.uuid:
             try:
                 cart = cart_db.find_open_cart(uuid=data.uuid)
-            except KeyError:
+            except CartNotFound:
                 cart = None
         else:
             logging.info(
@@ -128,7 +176,7 @@ async def sync(data: Sync) -> Cart:
             )
             cart = None
     if cart:
-        cart.apply_transactions(data.transactions, cart_db.applied_transactions_uuids)
+        cart.apply_transactions(data.transactions, cart_db.data.applied_transactions_uuids)
         if data.transactions:
             # simulate heavy computation
             await asyncio.sleep(2)

@@ -25,3 +25,4 @@ custom-elements.json
 
 # we have some python for the demo server
 *.pyc
+demoserver.json
