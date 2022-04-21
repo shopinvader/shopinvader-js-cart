@@ -29,7 +29,7 @@
   "devDependencies": {
     "@open-wc/eslint-config": "^4.3.0",
     "@open-wc/testing": "next",
-    "@shopinvader/fetch": "github:shopinvader/shopinvader-js-fetch",
+    "@shopinvader/fetch": "https://github.com/shopinvader/shopinvader-js-fetch",
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
