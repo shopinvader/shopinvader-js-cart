@@ -11,7 +11,7 @@ export class CartTransaction {
 
   constructor(productId: number, qty: number, uuid?: string) {
     this.productId = productId;
-    this.qty = qty;
+    this.qty = qty || 0;
     this.uuid = uuid || uuidv4();
   }
 
