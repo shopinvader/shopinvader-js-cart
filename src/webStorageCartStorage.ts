@@ -46,6 +46,12 @@ export class WebStorageCartStorage implements CartStorage {
 
   setUuid(uuid: string | null): void {
     const data = this._get();
+    if (data.uuid !== uuid) {
+      // Make sure to empty the local cart storage when the uuid change. This can
+      // happen e.g., when a new cart has been created in the backend for the user or
+      // when the user has logged out and logs in with another identity.
+      data.transactions = [];
+    }
     data.uuid = uuid;
     this._set(data);
   }
