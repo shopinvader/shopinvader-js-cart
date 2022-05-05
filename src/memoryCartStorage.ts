@@ -13,7 +13,7 @@ export class MemoryCartStorage implements CartStorage {
   }
 
   setUuid(uuid: string | null): void {
-    if (this.uuid !== uuid) {
+    if (this.uuid && this.uuid !== uuid) {
       this.transactions = [];
     }
     this.uuid = uuid;
