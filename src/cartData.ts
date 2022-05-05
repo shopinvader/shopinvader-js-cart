@@ -14,11 +14,11 @@ export class CartData {
 
   public erpCart: any;
 
-  static fromErpCart(erpCart: any): CartData {
+  static fromErpCart(erpCart: any | null): CartData {
     const cartData = new this();
     cartData.erpCart = erpCart;
     cartData.lines = [];
-    if (erpCart) {
+    if (erpCart && Array.isArray(erpCart?.lines)) {
       for (const erpCartLine of erpCart.lines) {
         cartData.addLine(CartLineData.fromErpCartLine(erpCartLine));
       }
