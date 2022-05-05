@@ -55,6 +55,11 @@ export class Cart {
     return this.cartStorage.getTransactions().length > 0;
   }
 
+  clearPendingTransactions() {
+    this.cartStorage.setUuid(null);
+    this.cartStorage.removeTransactions(this.cartStorage.getTransactions());
+  }
+
   getData(): CartData {
     const cartData = CartData.fromErpCart(this.erpCart);
     cartData.applyTransactions(this.cartStorage.getTransactions());
