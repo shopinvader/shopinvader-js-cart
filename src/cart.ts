@@ -113,6 +113,10 @@ export class Cart {
       );
       if (response.ok) {
         this.erpCart = await response.json();
+        if (Object.keys(this.erpCart).length === 0) {
+          // an empty object means no cart
+          this.erpCart = null;
+        }
         success = true;
         this.syncError = false;
         this.erpNotAvailable = false;

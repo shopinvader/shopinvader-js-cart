@@ -7,7 +7,7 @@ from enum import Enum
 from pathlib import Path
 
 import uvicorn
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from rich.logging import RichHandler
@@ -180,7 +180,9 @@ async def sync(data: Sync, cart_db: CartDatabase = Depends(cart_db)) -> Cart:
         if data.transactions:
             # simulate heavy computation
             await asyncio.sleep(2)
-    return cart
+        return cart
+    # Return an empty object if there is no cart.
+    return Response(content="{}", media_type="application/json")
 
 
 if __name__ == "__main__":
