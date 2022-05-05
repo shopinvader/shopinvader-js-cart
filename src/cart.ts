@@ -116,7 +116,6 @@ export class Cart {
         success = true;
         this.syncError = false;
         this.erpNotAvailable = false;
-        // TODO do we need to check the UUID ?
         this.cartStorage.setUuid(this.erpCart?.uuid);
         this.cartStorage.removeTransactions(txs);
       } else if (response.status === 503) {
