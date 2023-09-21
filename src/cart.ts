@@ -4,7 +4,10 @@ import { CartData } from './cartData.js';
 import { CartTransaction } from './cartTransaction.js';
 import { CartObserver } from './cartObserver.js';
 import { CartStorage } from './cartStorage.js';
-
+export interface CartOptions {
+  syncUrl: string,
+  debug: boolean
+}
 export class Cart {
   private erpFetch: any;
 
@@ -23,9 +26,17 @@ export class Cart {
 
   private observers: CartObserver[] = [];
 
-  constructor(erpFetch: any, cartStorage: CartStorage) {
+  public cartSyncUrl:string = 'v2/cart/sync'
+
+  private debug = false
+
+  constructor(erpFetch: any, cartStorage: CartStorage, options?:CartOptions) {
     this.erpFetch = erpFetch;
     this.cartStorage = cartStorage;
+    this.debug = options?.debug || false
+    if(options?.syncUrl) {
+      this.cartSyncUrl = options?.syncUrl
+    }
   }
 
   registerObserver(observer: CartObserver) {
@@ -74,22 +85,28 @@ export class Cart {
     const maxBackoff = 60 * 1000;
     let forceSync = force;
     if (this.synchronizing) {
-      console.log('Already synchronizing');
+      if(this.debug) {
+        console.log('Already synchronizing');
+      }
       return;
     }
     this.synchronizing = true;
     try {
       let backoff = 1000;
       while (forceSync || this.hasPendingTransactions()) {
-        console.log(
-          `sync force=${force} pending=${this.hasPendingTransactions()}`
-        );
+        if(this.debug) {
+          console.log(
+            `sync force=${force} pending=${this.hasPendingTransactions()}`
+          );
+        }
         // eslint-disable-next-line no-await-in-loop
         const success = await this.sync();
         if (success) {
           forceSync = false;
         } else {
-          console.log(`sleep ${backoff}`);
+          if(this.debug) {
+            console.log(`sleep ${backoff}`);
+          }
           backoff = Math.min(backoff * 2, maxBackoff);
           // eslint-disable-next-line no-await-in-loop, no-loop-func
           await new Promise(resolve => setTimeout(resolve, backoff));
@@ -106,9 +123,8 @@ export class Cart {
     const txs = this.cartStorage.getTransactions();
     let success: boolean;
     try {
-      console.log('v2/cart/sync');
       const response = await this.erpFetch.post(
-        'v2/cart/sync',
+        this.cartSyncUrl,
         {
           uuid: this.cartStorage.getUuid(),
           transactions: txs.map(transaction => transaction.toErpTransaction()),
@@ -130,25 +146,33 @@ export class Cart {
       } else if (response.status === 503) {
         // ERP is not available, this is not an error, the cart will simply stay
         // with pending transactions.
-        console.warn('shopinvader cart sync: ERP not available');
+        if(this.debug) {
+          console.warn('shopinvader cart sync: ERP not available');
+        }
         success = false;
         this.syncError = false;
         this.erpNotAvailable = true;
       } else {
-        console.warn(`shopinvader cart sync: http ${response.status}}`);
+        if(this.debug) {
+          console.warn(`shopinvader cart sync: http ${response.status}}`);
+        }
         success = false;
         this.syncError = true;
         this.erpNotAvailable = false;
       }
     } catch (error) {
-      console.warn(`shopinvader cart sync: exception ${error}}`);
+      if(this.debug) {
+        console.warn(`shopinvader cart sync: exception ${error}}`);
+      }
       success = false;
       this.syncError = true;
       // Yet some exceptions may mean the erp is not available ?
       this.erpNotAvailable = false;
     }
     this.notifyCartUpdated();
-    console.log(`sync result: ${success}`);
+    if(this.debug) {
+      console.log(`sync result: ${success}`);
+    }
     return success;
   }
 }
