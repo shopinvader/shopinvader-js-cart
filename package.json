@@ -3,7 +3,7 @@
   "description": "Shopinvader async cart library",
   "license": "MIT",
   "author": "ACSONE SA/NV",
-  "version": "0.1.0",
+  "version": "0.2.3",
   "type": "module",
   "main": "dist/src/index.js",
   "module": "dist/src/index.js",

@@ -1,6 +1,7 @@
 // Copyright (c) ACSONE SA/NV 2022
 
 import { v4 as uuidv4 } from 'uuid';
+import { isEqual } from './utils.js';
 
 export class CartTransaction {
   public readonly uuid: string;
@@ -9,14 +10,25 @@ export class CartTransaction {
 
   public qty: number;
 
-  constructor(productId: number, qty: number, uuid?: string) {
+  public options: any | null = null;
+
+  constructor(
+    productId: number,
+    qty: number,
+    uuid?: string | null,
+    options?: any
+  ) {
     this.productId = productId;
     this.qty = qty || 0;
     this.uuid = uuid || uuidv4();
+    this.options = options || null;
   }
 
   isForSameCartLine(other: CartTransaction): boolean {
-    return other.productId === this.productId;
+    return (
+      other.productId === this.productId &&
+      isEqual(other?.options || null, this.options)
+    );
   }
 
   merge(other: CartTransaction): boolean {
@@ -33,6 +45,7 @@ export class CartTransaction {
       uuid: this.uuid,
       product_id: this.productId,
       qty: this.qty,
+      options: this.options,
     };
   }
 }
