@@ -54,7 +54,7 @@ To automatically fix linting and formatting errors, run
 
 ```bash
 npm run format
-```Asking
+```
 
 ## Testing with Web Test Runner
 
