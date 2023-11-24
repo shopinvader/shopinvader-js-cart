@@ -83,6 +83,7 @@ export class Cart {
   // until it succeeds, with a maximum backoff delay of 1 minute.
   private async syncWithRetry(force: boolean = true) {
     const maxBackoff = 60 * 1000;
+    let tryCount = 0;
     let forceSync = force;
     if (this.synchronizing) {
       if(this.debug) {
@@ -92,7 +93,6 @@ export class Cart {
     }
     this.synchronizing = true;
     try {
-      let backoff = 1000;
       while (forceSync || this.hasPendingTransactions()) {
         if(this.debug) {
           console.log(
@@ -104,10 +104,11 @@ export class Cart {
         if (success) {
           forceSync = false;
         } else {
+          let backoff = Math.min(1000 * (2 ** tryCount), maxBackoff);
+          tryCount += 1;
           if(this.debug) {
             console.log(`sleep ${backoff}`);
           }
-          backoff = Math.min(backoff * 2, maxBackoff);
           // eslint-disable-next-line no-await-in-loop, no-loop-func
           await new Promise(resolve => setTimeout(resolve, backoff));
         }
