@@ -80,9 +80,9 @@ export class Cart {
   }
 
   // Call sync while there are pending transactions. Retry with exponential backoff
-  // until it succeeds, with a maximum backoff delay of 1 minute.
+  // until it succeeds, with a maximum backoff delay of 5 minute.
   private async syncWithRetry(force: boolean = true) {
-    const maxBackoff = 60 * 1000;
+    const maxBackoff = 60 * 5 * 1000;
     let tryCount = 0;
     let forceSync = force;
     if (this.synchronizing) {
