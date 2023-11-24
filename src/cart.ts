@@ -104,7 +104,8 @@ export class Cart {
         if (success) {
           forceSync = false;
         } else {
-          let backoff = Math.min(1000 * (2 ** tryCount), maxBackoff);
+          // https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/
+          let backoff = Math.floor(Math.random() * Math.min(1000 * (2 ** tryCount), maxBackoff));
           tryCount += 1;
           if(this.debug) {
             console.log(`sleep ${backoff}`);
