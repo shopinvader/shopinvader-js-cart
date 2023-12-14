@@ -158,17 +158,13 @@ export class Cart {
         this.syncError = false;
         this.erpNotAvailable = true;
       } else {
-        if (this.debug) {
-          console.warn(`shopinvader cart sync: http ${response.status}}`);
-        }
+        console.error(`shopinvader cart sync: http ${response.status}}`);
         success = false;
         this.syncError = true;
         this.erpNotAvailable = false;
       }
     } catch (error) {
-      if (this.debug) {
-        console.warn(`shopinvader cart sync: exception ${error}}`);
-      }
+      console.error(`shopinvader cart sync: exception ${error}}`);
       success = false;
       this.syncError = true;
       // Yet some exceptions may mean the erp is not available ?
