@@ -4,9 +4,10 @@ import { CartData } from './cartData.js';
 import { CartTransaction } from './cartTransaction.js';
 import { CartObserver } from './cartObserver.js';
 import { CartStorage } from './cartStorage.js';
+
 export interface CartOptions {
-  syncUrl: string,
-  debug: boolean
+  syncUrl: string;
+  debug: boolean;
 }
 export class Cart {
   private erpFetch: any;
@@ -26,16 +27,16 @@ export class Cart {
 
   private observers: CartObserver[] = [];
 
-  public cartSyncUrl:string = 'v2/cart/sync'
+  public cartSyncUrl: string = 'v2/cart/sync';
 
-  private debug = false
+  private debug = false;
 
-  constructor(erpFetch: any, cartStorage: CartStorage, options?:CartOptions) {
+  constructor(erpFetch: any, cartStorage: CartStorage, options?: CartOptions) {
     this.erpFetch = erpFetch;
     this.cartStorage = cartStorage;
-    this.debug = options?.debug || false
-    if(options?.syncUrl) {
-      this.cartSyncUrl = options?.syncUrl
+    this.debug = options?.debug || false;
+    if (options?.syncUrl) {
+      this.cartSyncUrl = options?.syncUrl;
     }
   }
 
@@ -86,7 +87,7 @@ export class Cart {
     let tryCount = 0;
     let forceSync = force;
     if (this.synchronizing) {
-      if(this.debug) {
+      if (this.debug) {
         console.log('Already synchronizing');
       }
       return;
@@ -94,7 +95,7 @@ export class Cart {
     this.synchronizing = true;
     try {
       while (forceSync || this.hasPendingTransactions()) {
-        if(this.debug) {
+        if (this.debug) {
           console.log(
             `sync force=${force} pending=${this.hasPendingTransactions()}`
           );
@@ -105,9 +106,11 @@ export class Cart {
           forceSync = false;
         } else {
           // https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/
-          let backoff = Math.floor(Math.random() * Math.min(1000 * (2 ** tryCount), maxBackoff));
+          const backoff = Math.floor(
+            Math.random() * Math.min(1000 * 2 ** tryCount, maxBackoff)
+          );
           tryCount += 1;
-          if(this.debug) {
+          if (this.debug) {
             console.log(`sleep ${backoff}`);
           }
           // eslint-disable-next-line no-await-in-loop, no-loop-func
@@ -148,31 +151,27 @@ export class Cart {
       } else if (response.status === 503) {
         // ERP is not available, this is not an error, the cart will simply stay
         // with pending transactions.
-        if(this.debug) {
+        if (this.debug) {
           console.warn('shopinvader cart sync: ERP not available');
         }
         success = false;
         this.syncError = false;
         this.erpNotAvailable = true;
       } else {
-        if(this.debug) {
-          console.warn(`shopinvader cart sync: http ${response.status}}`);
-        }
+        console.error(`shopinvader cart sync: http ${response.status}}`);
         success = false;
         this.syncError = true;
         this.erpNotAvailable = false;
       }
     } catch (error) {
-      if(this.debug) {
-        console.warn(`shopinvader cart sync: exception ${error}}`);
-      }
+      console.error(`shopinvader cart sync: exception ${error}}`);
       success = false;
       this.syncError = true;
       // Yet some exceptions may mean the erp is not available ?
       this.erpNotAvailable = false;
     }
     this.notifyCartUpdated();
-    if(this.debug) {
+    if (this.debug) {
       console.log(`sync result: ${success}`);
     }
     return success;
