@@ -41,11 +41,17 @@ export class CartTransaction {
 
   /* Convert to a JSON object suitable to send to the ERP */
   toErpTransaction(): any {
-    return {
+    let data: any = {
       uuid: this.uuid,
       product_id: this.productId,
       qty: this.qty,
-      options: this.options,
     };
+    if (this.options === null || Object.keys(this.options).length > 0) {
+      data = {
+        ...data,
+        options: this.options,
+      };
+    }
+    return data;
   }
 }
