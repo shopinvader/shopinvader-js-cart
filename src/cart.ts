@@ -138,10 +138,16 @@ export class Cart {
         'response'
       );
       if (response.ok) {
-        this.erpCart = await response.json();
-        if (Object.keys(this.erpCart).length === 0) {
-          // an empty object means no cart
+        // If a cart exists, it is returned with the response.
+        // otherwise, the response is null.
+        if (response.status === 204 ) {
           this.erpCart = null;
+        } else {
+          this.erpCart = await response.json();
+          if (Object.keys(this.erpCart).length === 0) {
+            // an empty object means no cart
+            this.erpCart = null;
+          }
         }
         success = true;
         this.syncError = false;
