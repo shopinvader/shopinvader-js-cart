@@ -9,17 +9,21 @@ export class CartLineData {
 
   public qty: number;
 
+  public options: any | null = null;
+
   public erpCartLine: any;
 
   constructor(
     hasPendingTransactions: boolean,
     productId: number,
     qty: number,
+    options?: any,
     erpCartLine?: any
   ) {
     this.hasPendingTransactions = hasPendingTransactions;
     this.productId = productId;
     this.qty = qty;
+    this.options = options || null;
     this.erpCartLine = erpCartLine;
   }
 
@@ -28,12 +32,18 @@ export class CartLineData {
       false,
       erpCartLine.product_id,
       erpCartLine.qty,
+      erpCartLine.options,
       erpCartLine
     );
   }
 
   static fromTransaction(transaction: CartTransaction): CartLineData {
-    return new this(true, transaction.productId, transaction.qty);
+    return new this(
+      true,
+      transaction.productId,
+      transaction.qty,
+      transaction.options
+    );
   }
 
   applyTransaction(transaction: CartTransaction) {
