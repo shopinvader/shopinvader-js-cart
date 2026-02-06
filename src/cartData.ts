@@ -2,6 +2,7 @@
 
 import { CartLineData } from './cartLineData.js';
 import { CartTransaction } from './cartTransaction.js';
+import { isEqual } from './utils.js';
 
 export class CartData {
   public hasPendingTransactions: boolean = false;
@@ -30,13 +31,20 @@ export class CartData {
     this.lines.push(line);
   }
 
-  getLine(productId: number): CartLineData | undefined {
-    return this.lines.find(line => line.productId === productId);
+  getLine(productId: number, options?: any): CartLineData | undefined {
+    return this.lines.find(
+      line =>
+        line.productId === productId &&
+        isEqual(line?.options || null, options || null)
+    );
   }
 
   applyTransactions(transactions: CartTransaction[]) {
     for (const transaction of transactions) {
-      const cartLineData = this.getLine(transaction.productId);
+      const cartLineData = this.getLine(
+        transaction.productId,
+        transaction?.options || null
+      );
       if (!cartLineData) {
         this.addLine(CartLineData.fromTransaction(transaction));
       } else {
