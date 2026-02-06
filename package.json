@@ -6,13 +6,14 @@
   "version": "0.2.3",
   "type": "module",
   "main": "dist/src/index.js",
+  "types": "dist/index.d.ts",
   "module": "dist/src/index.js",
   "files": [
     "dist/",
     "demo/"
   ],
   "exports": {
-    ".": "./dist/src/index.js"
+    ".": "./dist/index.js"
   },
   "scripts": {
     "start": "tsc && concurrently -k -r \"tsc --watch --preserveWatchOutput\" \"wds --node-resolve\"",
@@ -23,14 +24,11 @@
     "test:watch": "tsc && concurrently -k -r \"tsc --watch --preserveWatchOutput\" \"wtr --watch\"",
     "prepare": "npm run build"
   },
-  "dependencies": {
-    "uuid": "^8.3.2"
-  },
   "devDependencies": {
     "@open-wc/eslint-config": "^4.3.0",
     "@open-wc/testing": "next",
     "@shopinvader/fetch": "https://github.com/shopinvader/shopinvader-js-fetch",
-    "@types/uuid": "^8.3.4",
+    "@types/node": "^20.19.32",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
     "@web/dev-server": "^0.1.28",
@@ -42,7 +40,7 @@
     "lint-staged": "^10.5.4",
     "prettier": "^2.4.1",
     "tslib": "^2.3.1",
-    "typescript": "^4.5.2"
+    "typescript": "^5.0.0"
   },
   "eslintConfig": {
     "parser": "@typescript-eslint/parser",
@@ -82,5 +80,8 @@
       "eslint --fix",
       "prettier --write"
     ]
+  },
+  "dependencies": {
+    "uuid": "^13.0.0"
   }
 }
